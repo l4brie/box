@@ -4,7 +4,7 @@ INSTALL () {
         
         printf "$(basename $0): $NAME are installed.\n"
         
-        read -p "Are you sure want to reinstall (Y/n) : " confirm
+        read -p "Are you sure want to reinstall (Y/n) : " CONFIRM
         
         if [ "$CONFIRM" = "" ]; then CONFIRM="y"; fi
         if [ "$CONFIRM" = "Y" ]; then CONFIRM="y"; fi
@@ -12,6 +12,7 @@ INSTALL () {
             printf "install aborted.\n"
             exit 1
         fi
+        echo 
     fi
     
     if [ "$*" = "alpine" ]; then
