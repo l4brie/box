@@ -1,0 +1,45 @@
+#!/bin/sh
+
+PROGRAM=$(basename $0)
+THIS=$(dirname $(realpath $0))
+SOURCE=$THIS/src
+
+if [ $(uname -o) = "Android" ]; then
+	if [ $(id -u) = 0 ]; then
+        printf "$PROGRAM: must not be superuser to run command.\n"
+		exit 1
+	fi
+	BINDIR=$PREFIX/bin
+else
+	if [ $(id -u) != 0 ]; then
+        printf "$PROGRAM: must be superuser to run command.\n"
+        exit 1
+    fi
+	BINDIR=/usr/bin
+fi
+
+FILEOUT=$BINDIR/box
+
+fwrite () {
+	file_in=$(realpath $1)
+	if [ -f $file_in ]; then
+		printf "\n" >> $FILEOUT
+		cat $file_in >> $FILEOUT
+		printf "\n" >> $FILEOUT
+	fi
+}
+
+echo "#!/bin/sh" > $FILEOUT
+echo "# $(date)" >> $FILEOUT
+printf "\n" >> $FILEOUT
+
+fwrite $SOURCE/init.sh
+
+for i in $SOURCE/function/*
+do
+	fwrite $i
+done
+
+fwrite $SOURCE/main.sh
+
+chmod +x $FILEOUT
